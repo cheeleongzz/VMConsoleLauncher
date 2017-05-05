@@ -1,0 +1,45 @@
+###############################################
+Description:
+###############################################
+This simple script was created by following the video instruction from VMware
+(https://blogs.vmware.com/PowerCLI/2013/10/opening-the-virtual-machine-remote-console-through-powercli.html)
+
+This script provides a simple GUI, prompt for user credentials to connect to vCenter/vSphere host directly (based on the configured parameter $vcenter) and output all available VM using Out-GridView cmdlet. Select single or multiple virtual machines to launch VM remote console without logging into vSphere Web Client.
+
+###############################################
+Release Notes 20170505:
+###############################################
+1. Only tested on VMware PowerCLI 6.5 Release 1 build 4624819
+2. Only VMware.VimAutomation.Core is loaded
+
+###############################################
+Limitation:
+###############################################
+1. VM selection window closes everytime upon the click of "OK"
+2. Need to re-login to open the VM selection windows
+
+Pre-requisites:
+1. VMware PowerCLI must be installed. (Tested VMware PowerCLI 6.5 R1)
+2. Modify the script parameter $vcenter to the desired vcenter/ESXi IP address or FQDN.
+
+###############################################
+Instruction:
+###############################################
+1. Make sure $vcenter parameter is updated
+2. run the script & '.\vm console launcher.ps1'
+3. Enter login credentials and click login (Does not support "enter" key, feel free to modify
+4. Select single or multiple VM to launch VM console
+
+################################################
+Launch powershell Script from Windows Shortcut:
+################################################
+1. Right click on desktop to create a new shortcut
+2. At the file path, enter the following:
+   %SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File "D:\powershell\VM console launcher.ps1"
+3. Where,
+   -ExecutionPolicy Bypass will allows the script to run
+4. If you like to hide the powershell windows, add the following into the shortcut
+   -WindowStyle Hidden
+Refrence: http://www.sciosoft.com/blogs/post/2011/10/04/Launch-PowerShell-Script-from-Shortcut.aspx
+
+
