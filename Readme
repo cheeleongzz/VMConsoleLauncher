@@ -26,6 +26,8 @@ Release Notes:
            - Added Set-PowerCLIConfiguration for certificate and deprecation handling
            - Added Disconnect-VIServer for clean session teardown
            - Fixed duplicate username label in form definition
+           - Resolved re-login limitation: VM picker now loops after each launch
+             batch; cancel Out-GridView to disconnect and return to login form
 
 ###############################################
 Pre-requisites:
@@ -38,19 +40,15 @@ Pre-requisites:
 3. Modify the script parameter $vcenter to the desired vCenter Server IP or FQDN.
 
 ###############################################
-Limitation:
-###############################################
-1. VM selection window closes every time upon the click of "OK".
-2. Need to re-login to open the VM selection window again.
-
-###############################################
 Instruction:
 ###############################################
 1. Make sure $vcenter parameter is updated.
 2. Run the script: '.\vm console launcher.ps1'
 3. Enter login credentials and click Login.
    (Does not support "Enter" key; feel free to modify.)
-4. Select single or multiple VMs to launch VMRC.
+4. Select single or multiple VMs to launch VMRC. The picker reopens
+   automatically after each launch. Cancel (or close) the picker to
+   disconnect from vCenter and return to the login form.
 
 ################################################
 Launch PowerShell Script from Windows Shortcut:

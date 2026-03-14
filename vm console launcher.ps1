@@ -55,14 +55,20 @@ $button1.Width = 60
 $button1.Height = 30
 $button1.Add_Click({
     Connect-VIServer $vcenter -Username $username_tb.Text -Password $password_tb.Text
-    $selection = Get-VM | Out-GridView -OutputMode Multiple
 
-    # Open-VMConsoleWindow was removed in PowerCLI 13.0.
-    # For vSphere 8/9, acquire an MKS ticket and launch VMRC directly via vmrc:// URI.
-    foreach ($vm in $selection) {
-        $ticket = $vm.ExtensionData.AcquireTicket("mksTicket")
-        $vmrcUri = "vmrc://clone:$($ticket.Ticket)@$($vcenter):443?moid=$($vm.ExtensionData.MoRef.Value)"
-        Start-Process $vmrcUri
+    # Loop so the VM picker reopens after each launch batch.
+    # Cancelling Out-GridView (empty selection) exits the loop and disconnects.
+    while ($true) {
+        $selection = Get-VM | Out-GridView -OutputMode Multiple -Title "Select VMs (Cancel to disconnect and return to login)"
+        if (-not $selection) { break }
+
+        # Open-VMConsoleWindow was removed in PowerCLI 13.0.
+        # For vSphere 7/8/9, acquire an MKS ticket and launch VMRC directly via vmrc:// URI.
+        foreach ($vm in $selection) {
+            $ticket = $vm.ExtensionData.AcquireTicket("mksTicket")
+            $vmrcUri = "vmrc://clone:$($ticket.Ticket)@$($vcenter):443?moid=$($vm.ExtensionData.MoRef.Value)"
+            Start-Process $vmrcUri
+        }
     }
 
     Disconnect-VIServer $vcenter -Confirm:$false
