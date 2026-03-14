@@ -1,25 +1,20 @@
-﻿####Load PowerCLI Module####
-#Load VMware PowerCLI Core Module####
-Import-Module -Name VMware.VimAutomation.Core -ErrorAction SilentlyContinue
-####Define#####
+#### Load PowerCLI Module ####
+# Requires VMware PowerCLI 12.x or later (supports vSphere 7, 8, and 9)
+Import-Module -Name VMware.VimAutomation.Core -ErrorAction Stop
+
+# Suppress certificate warnings and deprecation notices for modern vSphere
+Set-PowerCLIConfiguration -InvalidCertificateAction Warn -DisplayDeprecationWarnings $false -Confirm:$false | Out-Null
+
+#### Define #####
 $vcenter = "vcenter address/fqdn"
 
-####Form Start####
+#### Form Start ####
 Add-Type -AssemblyName System.Windows.Forms
 $Form = New-Object system.Windows.Forms.Form
 $Form.Text = "VM Console Launcher"
 $Form.TopMost = $true
 $Form.Width = 260
 $Form.Height = 195
-
-$label1 = New-Object system.windows.Forms.Label
-$label1.Text = "Username: "
-$label1.AutoSize = $true
-$label1.Width = 25
-$label1.Height = 10
-$label1.location = new-object system.drawing.point(21,24)
-$label1.Font = "Microsoft Sans Serif,10"
-$Form.controls.Add($label1)
 
 $label1 = New-Object system.windows.Forms.Label
 $label1.Text = "Username: "
@@ -59,10 +54,24 @@ $button1.Text = "Login"
 $button1.Width = 60
 $button1.Height = 30
 $button1.Add_Click({
-#add here code triggered by the event
-Connect-VIServer $vcenter -username $username_tb.Text -Password $password_tb.Text
-$selection = Get-VM | Out-GridView -OutputMode Multiple
-$selection | foreach {Open-VMConsoleWindow $_ }
+    Connect-VIServer $vcenter -Username $username_tb.Text -Password $password_tb.Text
+
+    # Loop so the VM picker reopens after each launch batch.
+    # Cancelling Out-GridView (empty selection) exits the loop and disconnects.
+    while ($true) {
+        $selection = Get-VM | Out-GridView -OutputMode Multiple -Title "Select VMs (Cancel to disconnect and return to login)"
+        if (-not $selection) { break }
+
+        # Open-VMConsoleWindow was removed in PowerCLI 13.0.
+        # For vSphere 7/8/9, acquire an MKS ticket and launch VMRC directly via vmrc:// URI.
+        foreach ($vm in $selection) {
+            $ticket = $vm.ExtensionData.AcquireTicket("mksTicket")
+            $vmrcUri = "vmrc://clone:$($ticket.Ticket)@$($vcenter):443?moid=$($vm.ExtensionData.MoRef.Value)"
+            Start-Process $vmrcUri
+        }
+    }
+
+    Disconnect-VIServer $vcenter -Confirm:$false
 })
 $button1.location = new-object system.drawing.point(22,101)
 $button1.Font = "Microsoft Sans Serif,10"
@@ -73,7 +82,7 @@ $button2.Text = "Quit"
 $button2.Width = 60
 $button2.Height = 30
 $button2.Add_Click({
-$Form.close()
+    $Form.close()
 })
 $button2.location = new-object system.drawing.point(103,100)
 $button2.Font = "Microsoft Sans Serif,10"
