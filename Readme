@@ -1,45 +1,62 @@
 ###############################################
 Description:
 ###############################################
-This simple script was created by following the video instruction from VMware
-(https://blogs.vmware.com/PowerCLI/2013/10/opening-the-virtual-machine-remote-console-through-powercli.html)
-
-This script provides a simple GUI, prompt for user credentials to connect to vCenter/vSphere host directly (based on the configured parameter $vcenter) and output all available VM using Out-GridView cmdlet. Select single or multiple virtual machines to launch VM remote console without logging into vSphere Web Client.
+This simple script provides a GUI that prompts for user credentials to connect
+to a vCenter Server and displays all available VMs via Out-GridView. Select
+single or multiple virtual machines to launch VM Remote Console (VMRC) without
+logging into the vSphere Client.
 
 ###############################################
-Release Notes 20170505:
+Compatibility:
 ###############################################
-1. Only tested on VMware PowerCLI 6.5 Release 1 build 4624819
-2. Only VMware.VimAutomation.Core is loaded
+- vSphere 8.x
+- vSphere 9.x
+
+Note: vSphere 6.x and 7.x are no longer supported.
+
+###############################################
+Release Notes:
+###############################################
+20170505 - Initial release (PowerCLI 6.5 R1, vSphere 6.x)
+20260314 - Updated for vSphere 8 and 9 compatibility:
+           - Requires VMware PowerCLI 13.x or later
+           - Replaced removed Open-VMConsoleWindow cmdlet with VMRC ticket-based
+             launch using the vSphere AcquireTicket API (mksTicket)
+           - Added Set-PowerCLIConfiguration for certificate and deprecation handling
+           - Added Disconnect-VIServer for clean session teardown
+           - Fixed duplicate username label in form definition
+
+###############################################
+Pre-requisites:
+###############################################
+1. VMware PowerCLI 13.x or later must be installed.
+   Install from PowerShell Gallery:
+     Install-Module -Name VMware.PowerCLI -Scope CurrentUser
+2. VMware Remote Console (VMRC) must be installed on the local machine.
+   Download from: https://customerconnect.vmware.com/downloads/#all_products
+3. Modify the script parameter $vcenter to the desired vCenter Server IP or FQDN.
 
 ###############################################
 Limitation:
 ###############################################
-1. VM selection window closes everytime upon the click of "OK"
-2. Need to re-login to open the VM selection windows
-
-Pre-requisites:
-1. VMware PowerCLI must be installed. (Tested VMware PowerCLI 6.5 R1)
-2. Modify the script parameter $vcenter to the desired vcenter/ESXi IP address or FQDN.
+1. VM selection window closes every time upon the click of "OK".
+2. Need to re-login to open the VM selection window again.
 
 ###############################################
 Instruction:
 ###############################################
-1. Make sure $vcenter parameter is updated
-2. run the script & '.\vm console launcher.ps1'
-3. Enter login credentials and click login (Does not support "enter" key, feel free to modify
-4. Select single or multiple VM to launch VM console
+1. Make sure $vcenter parameter is updated.
+2. Run the script: '.\vm console launcher.ps1'
+3. Enter login credentials and click Login.
+   (Does not support "Enter" key; feel free to modify.)
+4. Select single or multiple VMs to launch VMRC.
 
 ################################################
-Launch powershell Script from Windows Shortcut:
+Launch PowerShell Script from Windows Shortcut:
 ################################################
-1. Right click on desktop to create a new shortcut
+1. Right-click on the desktop to create a new shortcut.
 2. At the file path, enter the following:
    %SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File "D:\powershell\VM console launcher.ps1"
-3. Where,
-   -ExecutionPolicy Bypass will allows the script to run
-4. If you like to hide the powershell windows, add the following into the shortcut
+3. -ExecutionPolicy Bypass allows the script to run.
+4. To hide the PowerShell window, add:
    -WindowStyle Hidden
-Refrence: http://www.sciosoft.com/blogs/post/2011/10/04/Launch-PowerShell-Script-from-Shortcut.aspx
-
-
