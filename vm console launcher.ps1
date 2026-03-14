@@ -1,5 +1,5 @@
 #### Load PowerCLI Module ####
-# Requires VMware PowerCLI 13.x or later (supports vSphere 8 and 9)
+# Requires VMware PowerCLI 12.x or later (supports vSphere 7, 8, and 9)
 Import-Module -Name VMware.VimAutomation.Core -ErrorAction Stop
 
 # Suppress certificate warnings and deprecation notices for modern vSphere

@@ -9,16 +9,17 @@ logging into the vSphere Client.
 ###############################################
 Compatibility:
 ###############################################
+- vSphere 7.x
 - vSphere 8.x
 - vSphere 9.x
 
-Note: vSphere 6.x and 7.x are no longer supported.
+Note: vSphere 6.x and earlier are no longer supported.
 
 ###############################################
 Release Notes:
 ###############################################
 20170505 - Initial release (PowerCLI 6.5 R1, vSphere 6.x)
-20260314 - Updated for vSphere 8 and 9 compatibility:
+20260314 - Updated for vSphere 7, 8, and 9 compatibility:
            - Requires VMware PowerCLI 13.x or later
            - Replaced removed Open-VMConsoleWindow cmdlet with VMRC ticket-based
              launch using the vSphere AcquireTicket API (mksTicket)
@@ -29,7 +30,7 @@ Release Notes:
 ###############################################
 Pre-requisites:
 ###############################################
-1. VMware PowerCLI 13.x or later must be installed.
+1. VMware PowerCLI 12.x or later must be installed.
    Install from PowerShell Gallery:
      Install-Module -Name VMware.PowerCLI -Scope CurrentUser
 2. VMware Remote Console (VMRC) must be installed on the local machine.
